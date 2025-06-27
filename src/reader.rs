@@ -4,6 +4,7 @@ use std::{
     io::{BufRead, BufReader},
 };
 
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 pub fn read_data(path: &str) -> Vec<Vec<f64>> {
     let mut data: Vec<Vec<f64>> = Vec::new();
     let file = File::open(path).expect("File not found");
@@ -12,7 +13,7 @@ pub fn read_data(path: &str) -> Vec<Vec<f64>> {
         if line.is_ok() {
             let mut point = Vec::new();
             let line = line.as_ref().unwrap();
-            for (_, val) in line.split(',').enumerate() {
+            for val in line.split(',') {
                 let chars = val.chars();
                 let val = chars.as_str();
                 let c: f64 = val.parse().unwrap_or(f64::INFINITY);
@@ -26,11 +27,12 @@ pub fn read_data(path: &str) -> Vec<Vec<f64>> {
     data
 }
 
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 pub fn read_partial_labels(path: &str) -> HashMap<usize, Vec<usize>> {
     let labels = read_data(path)
         .iter()
         .flatten()
-        .cloned()
+        .copied()
         .collect::<Vec<f64>>();
     let mut input = HashMap::new();
     for (i, label) in labels.iter().enumerate() {

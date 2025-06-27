@@ -1,15 +1,14 @@
-use ndarray::Array2;
-use petal_clustering::{Fit, HDbscan};
-
 use crate::{
     reader::{read_data, read_partial_labels},
     save::{save_clusters, save_outlier_scores},
 };
+use ndarray::Array2;
+use petal_clustering::{Fit, HDbscan};
 mod reader;
 mod save;
 
 fn main() {
-    let data = read_data("data/toy.csv");
+    let data = read_data("data/data.csv");
     let (n, d) = (data.len(), data[0].len());
     println!("# of points:   {n}");
     println!("# of features: {d}");
@@ -21,7 +20,7 @@ fn main() {
     };
 
     // Unsupervised clustering
-    let flattened = data.iter().flatten().cloned().collect::<Vec<f64>>();
+    let flattened = data.iter().flatten().copied().collect::<Vec<f64>>();
     let input = Array2::from_shape_vec((n, d), flattened).expect("data shape error");
     let (clusters, noise_points, _) = model.fit(&input, None);
     save_clusters(clusters, noise_points, "output/clusters.csv");
@@ -32,5 +31,5 @@ fn main() {
     save_clusters(clusters, noise_points, "output/semi_clusters.csv");
 
     // Outlier scores
-    save_outlier_scores(outlier_scores, "output/outlier_scores.csv");
+    save_outlier_scores(&outlier_scores, "output/outlier_scores.csv");
 }
