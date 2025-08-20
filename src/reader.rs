@@ -10,9 +10,8 @@ pub fn read_data(path: &str) -> Vec<Vec<f64>> {
     let file = File::open(path).expect("File not found");
     let reader = BufReader::new(file);
     for line in reader.lines() {
-        if line.is_ok() {
+        if let Ok(line) = &line {
             let mut point = Vec::new();
-            let line = line.as_ref().unwrap();
             for val in line.split(',') {
                 let chars = val.chars();
                 let val = chars.as_str();
